@@ -6,17 +6,20 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 11:31:38 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/04 11:31:38 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/04 21:00:39 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 char *get_next_line(int fd)
 {
-    static t_list *buffer_list = NULL;
-    char          *buffer;
-    int           bytes_read;
+    static t_list    *buffer_list;
+    char            *buffer;
+    char            *line;
+    int             bytes_read;
 
     if (fd < 0 || BUFFER_SIZE <= 0)
         return (NULL);
@@ -26,68 +29,79 @@ char *get_next_line(int fd)
     while (!newline(buffer_list))
     {
         bytes_read = read(fd, buffer, BUFFER_SIZE);
-        if (bytes_read <= 0)
+        if (bytes_read < 0)
         {
-            if (bytes_read == -1)
-                free_until_newline(buffer_list);
-            return (free(buffer), NULL);
+            free(buffer);
+            free_until_newline(buffer_list);
+            return (NULL);
         }
+        if (bytes_read == 0)
+            break;
         buffer[bytes_read] = '\0';
-        ft_lstcreate_and_add_back(&buffer_list, strdup(buffer));
-        if (!buffer_list || !buffer_list->content)
-            return (free_until_newline(buffer_list), free(buffer), NULL);
-    }
-    return (free(buffer), get_line_from_buffer(buffer_list));
-}
-
-
-t_list *create_node(char *content)
-{
-    t_list *new_node;
-
-    new_node = (t_list *)malloc(sizeof(t_list));
-    if (!new_node)
-        return (NULL);
-    new_node->content = content;
-    new_node->next = NULL;
-    return (new_node);
-}
-
-int newline(t_list *buffer_list)
-{
-    t_list *temp = buffer_list;
-    while (temp)
-    {
-        if (strchr(temp->content, '\n'))
-            return (1);
-        temp = temp->next;
-    }
-    return (0);
-}
-
-
-t_list *free_until_newline(t_list *buffer_list)
-{
-    t_list *temp;
-    t_list *remainder;
-    char   *newline_pos;
-
-    while (buffer_list)
-    {
-        newline_pos = ft_strchr(buffer_list->content, '\n');
-        if (newline_pos)
+        if (!ft_lstcreate_and_add_back(&buffer_list, ft_strdup(buffer)))
         {
-            remainder = buffer_list->next;
-            free(buffer_list->content);
-            free(buffer_list);
-            return (remainder);
+            free(buffer);
+            free_until_newline(buffer_list);
+            return (NULL);
         }
-        temp = buffer_list;
-        buffer_list = buffer_list->next;
-        free(temp->content);
-        free(temp);
     }
-    return (NULL);
+    line = get_line_from_buffer(buffer_list);
+    buffer_list = free_until_newline(buffer_list);
+    return (free(buffer), line);
+}
+
+t_list	*create_node(char *content)
+{
+	t_list	*new_node;
+
+	new_node = (t_list *)malloc(sizeof(t_list));
+	if (!new_node)
+		return (NULL);
+	new_node->content = content;
+	new_node->next = NULL;
+	return (new_node);
+}
+
+int	newline(t_list *buffer_list)
+{
+	t_list	*temp;
+
+	temp = buffer_list;
+	while (temp)
+	{
+		if (ft_strchr(temp->content, '\n'))
+			return (1);
+		temp = temp->next;
+	}
+	return (0);
+}
+
+t_list	*free_until_newline(t_list *buffer_list)
+{
+	t_list	*temp;
+	char	*newline_pos;
+
+	if (!buffer_list)
+		return (NULL);
+	while (buffer_list)
+	{
+		newline_pos = ft_strchr(buffer_list->content, '\n');
+		if (newline_pos && *(newline_pos + 1))
+		{
+			temp = (t_list *)malloc(sizeof(t_list));
+			temp->content = ft_strdup(newline_pos + 1);
+			if (!temp || !temp->content)
+				return (free(temp), NULL);
+			temp->next = buffer_list->next;
+			return (free(buffer_list->content), free(buffer_list), temp);
+		}
+		temp = buffer_list->next;
+		free(buffer_list->content);
+		free(buffer_list);
+		buffer_list = temp;
+	}
+	/* Return NULL when no remaining content after newline */
+	return (NULL);
 }
 
 char	*ft_strchr(char *s, int c)
@@ -107,31 +121,52 @@ char	*ft_strchr(char *s, int c)
 	return (NULL);
 }
 
-char *get_line_from_buffer(t_list *buffer_list)
+char	*get_line_from_buffer(t_list *buffer_list)
 {
-    t_list *temp = buffer_list;
-    char   *line = NULL;
-    char   *newline_pos;
-    char   *partial_line;
+	char	*line;
+	int		i;
+	int		len;
+	t_list	*current;
+	char	*content;
 
-    while (temp)
-    {
-        newline_pos = ft_strchr(temp->content, '\n');
-        if (newline_pos)
-        {
-            size_t len = newline_pos - (char *)temp->content + 1;
-            partial_line = (char *)malloc(len + 1);
-            if (!partial_line)
-                return (NULL);
-            ft_strlcpy(partial_line, temp->content, len + 1);
-            line = ft_strjoin(line, partial_line);
-            free(partial_line);
-            break;
-        }
-        line = ft_strjoin(line, temp->content);
-        temp = temp->next;
-    }
-    return (line);
+	if (!buffer_list)
+		return (NULL);
+	len = 0;
+	current = buffer_list;
+	while (current)
+	{
+		content = (char *)current->content;
+		i = 0;
+		while (content[i] && content[i] != '\n')
+			i++;
+		len += i;
+		if (content[i] == '\n')
+		{
+			len++;
+			break ;
+		}
+		current = current->next;
+	}
+	line = (char *)malloc(sizeof(char) * (len + 1));
+	if (!line)
+		return (NULL);
+	current = buffer_list;
+	len = 0;
+	while (current)
+	{
+		content = (char *)current->content;
+		i = 0;
+		while (content[i] && content[i] != '\n')
+			line[len++] = content[i++];
+		if (content[i] == '\n')
+		{
+			line[len++] = '\n';
+			break ;
+		}
+		current = current->next;
+	}
+	line[len] = '\0';
+	return (line);
 }
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t size)
@@ -158,7 +193,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t size)
 	return (src_len);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
 	size_t	len1;
 	size_t	len2;
@@ -215,51 +250,64 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 	return (dest);
 }
 
-void ft_lstcreate_and_add_back(t_list **lst, char *content)
+int	ft_lstcreate_and_add_back(t_list **lst, char *content)
 {
-    t_list *new_node;
-    t_list *last;
+	t_list	*new_node;
+	t_list	*last;
 
-    new_node = (t_list *)malloc(sizeof(t_list));
-    if (!new_node)
-        return;
-    new_node->content = content;
-    new_node->next = NULL;
-
-    if (*lst == NULL)
-    {
-        *lst = new_node;
-    }
-    else
-    {
-        last = *lst;
-        while (last->next != NULL)
-            last = last->next;
-        last->next = new_node;
-    }
+	if (!lst || !content)
+		return (0);
+	new_node = (t_list *)malloc(sizeof(t_list));
+	if (!new_node)
+		return (0);
+	new_node->content = content;
+	new_node->next = NULL;
+	if (*lst == NULL)
+		*lst = new_node;
+	else
+	{
+		last = *lst;
+		while (last->next)
+			last = last->next;
+		last->next = new_node;
+	}
+	return (1);
 }
 
-int main(void)
+char	*ft_strdup(const char *s1)
 {
-    int     fd;
-    char    *line;
+	char	*duplicate;
+	size_t	len;
 
-    // Open the file for reading
-    fd = open("hello.txt", O_RDONLY);
-    if (fd < 0)
-    {
-        perror("Error opening file");
-        return (1);
-    }
+	len = ft_strlen(s1) + 1;
+	duplicate = (char *)malloc(len * sizeof(char));
+	if (duplicate == NULL)
+	{
+		return (NULL);
+	}
+	ft_memcpy(duplicate, s1, len);
+	return (duplicate);
+}
 
-    // Read and print each line
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        printf("%s", line);   // Print the line
-        free(line);           // Free the line after use
-    }
+int	main(void)
+{
+	int		fd;
+	char	*line;
 
-    // Close the file descriptor
-    close(fd);
-    return (0);
+	// Open the file for reading
+	fd = open("hello.txt", O_RDONLY);
+	if (fd < 0)
+	{
+		perror("Error opening file");
+		return (1);
+	}
+	// Read and print each line
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line); // Print the line
+		free(line);         // Free the line after use
+	}
+	// Close the file descriptor
+	close(fd);
+	return (0);
 }
