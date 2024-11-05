@@ -1,27 +1,10 @@
-# Compiled object files
-*.o
+# Ignore everything
+*
 
-# Compiled dynamic libraries
-*.so
-
-# Compiled static libraries
-*.a
-
-# Executable files
-*.out
-*.exe
-
-# Debug files
-*.dSYM/
-*.stackdump
-
-# Temporary files
-*.tmp
-*.temp
-
-# Backup files
-*~
-
-# IDE specific files
-.vscode/
-.idea/
+# Do not ignore these specific files
+!get_next_line.c
+!get_next_line.h
+!get_next_line_utils.c
+!get_next_line_bonus.c
+!get_next_line_bonus.h
+!get_next_line_utils_bonus.c
