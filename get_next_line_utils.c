@@ -6,24 +6,12 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 16:39:39 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/09 23:19:23 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/09 23:56:30 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdlib.h>
-
-t_list	*create_node(char *content)
-{
-	t_list	*new_node;
-
-	new_node = (t_list *)malloc(sizeof(t_list));
-	if (!new_node)
-		return (NULL);
-	new_node->content = content;
-	new_node->next = NULL;
-	return (new_node);
-}
 
 int	newline(t_list *buffer_list)
 {
@@ -46,9 +34,11 @@ int	ft_lstcreate_and_add_back(t_list **lst, char *content)
 
 	if (!lst || !content)
 		return (0);
-	new_node = create_node(content);
+	new_node = (t_list *)malloc(sizeof(t_list));
 	if (!new_node)
 		return (0);
+	new_node->content = content;
+	new_node->next = NULL;
 	if (*lst == NULL)
 		*lst = new_node;
 	else
@@ -105,4 +95,26 @@ int	get_line_length(t_list *buffer_list)
 		current = current->next;
 	}
 	return (length);
+}
+
+char	*ft_strdup(char *s1)
+{
+	char	*duplicate;
+	size_t	len;
+	size_t	i;
+
+	len = 0;
+	while (s1[len] != '\0')
+		len++;
+	duplicate = (char *)malloc((len + 1) * sizeof(char));
+	if (duplicate == NULL)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		duplicate[i] = s1[i];
+		i++;
+	}
+	duplicate[i] = '\0';
+	return (duplicate);
 }
