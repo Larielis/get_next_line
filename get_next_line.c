@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 11:31:38 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/09 23:56:36 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/10 00:02:36 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,33 +17,42 @@
 char	*get_next_line(int fd)
 {
 	static t_list	*buffer_list;
-	char			*buffer;
 	char			*line;
-	int				bytes_read;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	buffer = (char *)malloc(BUFFER_SIZE + 1);
-	if (!buffer)
+	if (!read_to_buffer_list(fd, &buffer_list))
 		return (NULL);
-	while (!newline(buffer_list) && bytes_read > 0)
-	{
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		if (bytes_read < 0)
-			return (free(buffer), free_until_newline(buffer_list), NULL);
-		if (bytes_read > 0)
-		{
-			buffer[bytes_read] = '\0';
-			if (!ft_lstcreate_and_add_back(&buffer_list, ft_strdup(buffer)))
-				return (free(buffer), free_until_newline(buffer_list), NULL);
-		}
-	}
-	free(buffer);
 	if (!buffer_list)
 		return (NULL);
 	line = get_line_from_buffer(buffer_list);
 	buffer_list = free_until_newline(buffer_list);
 	return (line);
+}
+
+int	read_to_buffer_list(int fd, t_list **buffer_list)
+{
+	char	*buffer;
+	int		bytes_read;
+
+	buffer = (char *)malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (0);
+	bytes_read = 1;
+	while (!newline(*buffer_list) && bytes_read > 0)
+	{
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read < 0)
+			return (free(buffer), free_until_newline(*buffer_list), 0);
+		if (bytes_read > 0)
+		{
+			buffer[bytes_read] = '\0';
+			if (!ft_lstcreate_and_add_back(buffer_list, ft_strdup(buffer)))
+				return (free(buffer), free_until_newline(*buffer_list), 0);
+		}
+	}
+	free(buffer);
+	return (1);
 }
 
 t_list	*free_until_newline(t_list *buffer_list)

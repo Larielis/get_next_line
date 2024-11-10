@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -D BUFFER_SIZE=12
+CFLAGS = -Wall -Wextra -Werror -g -D BUFFER_SIZE=1
 SRCS = get_next_line.c get_next_line_utils.c main.c
 OBJS = $(SRCS:.c=.o)
 HEADER = get_next_line.h
@@ -9,14 +9,12 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
-	rm -f $(OBJS)
 
 %.o: %.c $(HEADER)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
 	rm -f $(OBJS)
-	rm -f $(NAME)
 
 fclean: clean
 	rm -f $(NAME)

@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 13:19:10 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/09 23:22:30 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/10 00:01:41 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,5 @@ char				*ft_strchr(const char *s, int c);
 size_t				ft_strlcat(char *dest, const char *src, size_t n);
 int					get_line_length(t_list *buffer_list);
 char				*ft_strdup(char *s1);
-
+int					read_to_buffer_list(int fd, t_list **buffer_list);
 #endif
