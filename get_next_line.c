@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 11:31:38 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/10 00:02:36 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/10 17:25:43 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*get_next_line(int fd)
 	if (!buffer_list)
 		return (NULL);
 	line = get_line_from_buffer(buffer_list);
-	buffer_list = free_until_newline(buffer_list);
+	free_until_newline(&buffer_list);
 	return (line);
 }
 
@@ -43,45 +43,42 @@ int	read_to_buffer_list(int fd, t_list **buffer_list)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 0)
-			return (free(buffer), free_until_newline(*buffer_list), 0);
+			return (free(buffer), free_until_newline(buffer_list), 0);
 		if (bytes_read > 0)
 		{
 			buffer[bytes_read] = '\0';
 			if (!ft_lstcreate_and_add_back(buffer_list, ft_strdup(buffer)))
-				return (free(buffer), free_until_newline(*buffer_list), 0);
+				return (free(buffer), free_until_newline(buffer_list), 0);
 		}
 	}
-	free(buffer);
-	return (1);
+	return (free(buffer), 1);
 }
 
-t_list	*free_until_newline(t_list *buffer_list)
+void	free_until_newline(t_list **buffer_list)
 {
 	t_list	*temp;
-	t_list	*new_node;
 	char	*newline_pos;
 
-	if (!buffer_list)
-		return (NULL);
-	while (buffer_list)
+	while (*buffer_list)
 	{
-		newline_pos = ft_strchr(buffer_list->content, '\n');
+		newline_pos = ft_strchr((*buffer_list)->content, '\n');
 		if (newline_pos && *(newline_pos + 1))
 		{
-			new_node = (t_list *)malloc(sizeof(t_list));
-			if (!new_node)
-				return (NULL);
-			new_node->content = ft_strdup(newline_pos + 1);
-			if (!new_node->content)
-				return (free(new_node), NULL);
-			new_node->next = NULL;
-			return (free(buffer_list->content), free(buffer_list), new_node);
+			temp = (t_list *)malloc(sizeof(t_list));
+			if (!temp)
+				return ;
+			temp->content = ft_strdup(newline_pos + 1);
+			if (!temp->content)
+				return (free(temp), (void)0);
+			temp->next = NULL;
+			(free((*buffer_list)->content), free(*buffer_list));
+			*buffer_list = temp;
+			return ;
 		}
-		temp = buffer_list->next;
-		(free(buffer_list->content), free(buffer_list));
-		buffer_list = temp;
+		temp = (*buffer_list)->next;
+		(free((*buffer_list)->content), free(*buffer_list));
+		*buffer_list = temp;
 	}
-	return (NULL);
 }
 
 char	*ft_strchr(const char *s, int c)

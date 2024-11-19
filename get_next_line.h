@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 13:19:10 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/10 00:01:41 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/10 17:17:06 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ typedef struct s_list
 	struct s_list	*next;
 }					t_list;
 
-t_list				*free_until_newline(t_list *buffer_list);
+void				free_until_newline(t_list **buffer_list);
 char				*get_next_line(int fd);
 t_list				*create_node(char *content);
 int					newline(t_list *buffer_list);

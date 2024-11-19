@@ -1,5 +1,5 @@
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -D BUFFER_SIZE=1
+CFLAGS = -Wall -Wextra -Werror -g -D BUFFER_SIZE=100
 SRCS = get_next_line.c get_next_line_utils.c main.c
 OBJS = $(SRCS:.c=.o)
 HEADER = get_next_line.h
