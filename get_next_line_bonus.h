@@ -6,12 +6,12 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:15:56 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/19 19:15:56 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/24 00:18:58 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_BONUS_H
-# define GET_NEXT_LINE__BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 
 # include <fcntl.h>
 # include <stdio.h>

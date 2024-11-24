@@ -6,13 +6,11 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:16:00 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/19 19:16:01 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/24 00:17:32 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
-#include <stdlib.h>
-#include <unistd.h>
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
