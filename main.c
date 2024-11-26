@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 23:59:04 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/10 17:39:48 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/26 19:24:12 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,40 +15,26 @@
 #include <stdio.h>
 #include <unistd.h>
 
-int	main(void)
+int	main(int argc, char **argv)
 {
 	int		fd;
-	char	*line;
+	char	*lineFile1;
+	
+	if (argc != 2)
+		return (printf("Invalid arguments\n"), EXIT_FAILURE);
 
-	fd = open("1char.txt", O_RDONLY);
-	if (fd < 0)
+	fd = open(argv[1], O_RDONLY);
+	if (!fd)
 	{
-		perror("Error opening file");
-		return (1);
+		return (-1);
 	}
-
-	line = get_next_line(fd);
-	if (line)
+	
+	while ((lineFile1 = (get_next_line(fd))) != NULL)
 	{
-		printf("Line 1: %s\n", line);
-		free(line);
+		printf("%s", lineFile1);
+		free(lineFile1);
 	}
-	else
-	{
-		printf("Line 1: NULL\n");
-	}
-
-	line = get_next_line(fd);
-	if (line)
-	{
-		printf("Line 2: %s\n", line);
-		free(line);
-	}
-	else
-	{
-		printf("Line 2: NULL\n");
-	}
-
+	
 	close(fd);
 	return (0);
 }

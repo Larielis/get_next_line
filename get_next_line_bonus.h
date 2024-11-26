@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/19 19:15:56 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/24 00:18:58 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/26 19:27:38 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ typedef struct s_list
 
 void				free_until_newline(t_list **buffer_list);
 char				*get_next_line(int fd);
-t_list				*create_node(char *content);
 int					newline(t_list *buffer_list);
 int					ft_lstcreate_and_add_back(t_list **lst, char *content);
 char				*get_line_from_buffer(t_list *buffer_list);

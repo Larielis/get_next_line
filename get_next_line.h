@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 13:19:10 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/10 17:17:06 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/26 20:06:06 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 42
 # endif
+
+#define malloc2(...) NULL
 
 typedef struct s_list
 {
