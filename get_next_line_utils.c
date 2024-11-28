@@ -6,115 +6,74 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 16:39:39 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/09 23:56:30 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/28 15:03:08 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdlib.h>
 
-int	newline(t_list *buffer_list)
+char	*ft_strchr(char *s, char c)
 {
-	t_list	*temp;
-
-	temp = buffer_list;
-	while (temp)
+	while (*s != '\0')
 	{
-		if (ft_strchr(temp->content, '\n'))
-			return (1);
-		temp = temp->next;
+		if (*s == c)
+			return (s);
+		s++;
 	}
-	return (0);
+	return (NULL);
 }
 
-int	ft_lstcreate_and_add_back(t_list **lst, char *content)
+size_t	ft_strsize(const char *str)
 {
-	t_list	*new_node;
-	t_list	*last;
-
-	if (!lst || !content)
-		return (0);
-	new_node = (t_list *)malloc(sizeof(t_list));
-	if (!new_node)
-		return (0);
-	new_node->content = content;
-	new_node->next = NULL;
-	if (*lst == NULL)
-		*lst = new_node;
-	else
-	{
-		last = *lst;
-		while (last->next)
-			last = last->next;
-		last->next = new_node;
-	}
-	return (1);
-}
-
-char	*get_line_from_buffer(t_list *buffer_list)
-{
-	char	*line;
-	size_t	len;
-	t_list	*current;
-
-	len = get_line_length(buffer_list);
-	line = (char *)malloc(sizeof(char) * (len + 1));
-	if (!line)
-		return (NULL);
-	line[0] = '\0';
-	current = buffer_list;
-	while (current)
-	{
-		ft_strlcat(line, current->content, len + 1);
-		if (ft_strchr(current->content, '\n'))
-			break ;
-		current = current->next;
-	}
-	return (line);
-}
-
-int	get_line_length(t_list *buffer_list)
-{
-	int		length;
-	t_list	*current;
-	int		i;
-
-	length = 0;
-	current = buffer_list;
-	while (current)
-	{
-		i = 0;
-		while (current->content[i] && current->content[i] != '\n')
-			i++;
-		length += i;
-		if (current->content[i] == '\n')
-		{
-			length++;
-			break ;
-		}
-		current = current->next;
-	}
-	return (length);
-}
-
-char	*ft_strdup(char *s1)
-{
-	char	*duplicate;
-	size_t	len;
 	size_t	i;
 
-	len = 0;
-	while (s1[len] != '\0')
-		len++;
-	duplicate = (char *)malloc((len + 1) * sizeof(char));
-	if (duplicate == NULL)
-		return (NULL);
 	i = 0;
-	while (i < len)
-	{
-		duplicate[i] = s1[i];
+	while (str[i] != '\0')
 		i++;
+	return (i);
+}
+
+size_t	ft_lstlen(t_list *lst)
+{
+	size_t	len;
+
+	len = 0;
+	while (lst != NULL)
+	{
+		len += ft_strsize(lst->content);
+		lst = lst->next;
 	}
-	duplicate[i] = '\0';
-	return (duplicate);
+	return (len);
+}
+
+void	ft_lstclear(t_list **lst, void (*del)(void *))
+{
+	t_list	*current;
+	t_list	*next;
+
+	if (lst == NULL || del == NULL)
+		return ;
+	current = *lst;
+	while (current != NULL)
+	{
+		next = current->next;
+		del(current->content);
+		free(current);
+		current = next;
+	}
+	*lst = NULL;
+}
+
+t_list	*ft_lstnew(void *content)
+{
+	t_list	*list;
+
+	list = (t_list *)malloc(sizeof(t_list));
+	if (!list)
+	{
+		return (NULL);
+	}
+	list->content = content;
+	list->next = NULL;
+	return (list);
 }
