@@ -6,7 +6,7 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 11:31:38 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/30 03:01:02 by racamach         ###   ########.fr       */
+/*   Updated: 2024/11/30 15:51:56 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,30 +44,28 @@ char	*get_line_from_buffer(t_list *buffer_list)
 {
 	char	*line;
 	size_t	len;
-	t_list	*current;
 	size_t	i;
+	size_t	line_index;
 
-	len = 0;
-	current = buffer_list;
-	while (current)
+	len = calculate_line_length(buffer_list);
+	line = malloc(len + 1);
+	if (!line)
+		return (NULL);
+	line_index = 0;
+	while (buffer_list && line_index < len)
 	{
 		i = 0;
-		while (current->content[i] && current->content[i] != '\n')
-			i++;
-		len += i + (current->content[i] == '\n');
-		if (current->content[i] == '\n')
+		while (buffer_list->content[i] && buffer_list->content[i] != '\n'
+			&& line_index < len)
+			line[line_index++] = buffer_list->content[i++];
+		if (buffer_list->content[i] == '\n' && line_index < len)
+		{
+			line[line_index++] = '\n';
 			break ;
-		current = current->next;
-	}
-	if (!(line = malloc(len + 1)))
-		return (NULL);
-	line[0] = '\0';
-	while (buffer_list && (ft_strlcat(line, buffer_list->content, len + 1), 1))
-	{
-		if (ft_strchr(buffer_list->content, '\n'))
-			break ;
+		}
 		buffer_list = buffer_list->next;
 	}
+	line[line_index] = '\0';
 	return (line);
 }
 
@@ -140,121 +138,4 @@ char	*get_next_line(int fd)
 	line = get_line_from_buffer(buffer_list);
 	free_until_newline(&buffer_list);
 	return (line);
-}
-
-char	*ft_strdup(char *s1)
-{
-	char	*duplicate;
-	size_t	len;
-	size_t	i;
-
-	len = 0;
-	while (s1[len] != '\0')
-		len++;
-	duplicate = (char *)malloc((len + 1) * sizeof(char));
-	if (duplicate == NULL)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		duplicate[i] = s1[i];
-		i++;
-	}
-	duplicate[i] = '\0';
-	return (duplicate);
-}
-
-char	*ft_strchr(char *s, int c)
-{
-	while (*s != '\0')
-	{
-		if (*s == (char)c)
-		{
-			return ((char *)s);
-		}
-		s++;
-	}
-	if (*s == (char)c)
-	{
-		return ((char *)s);
-	}
-	return (NULL);
-}
-
-size_t	ft_strlcat(char *dest, const char *src, size_t n)
-{
-	size_t	dsize;
-	size_t	ssize;
-	size_t	i;
-
-	dsize = 0;
-	while (dest[dsize] != '\0')
-		dsize++;
-	ssize = 0;
-	while (src[ssize] != '\0')
-		ssize++;
-	if (n == 0 || dsize >= n)
-		return (ssize + n);
-	i = 0;
-	while (src[i] != '\0' && (dsize + i) < (n - 1))
-	{
-		dest[dsize + i] = src[i];
-		i++;
-	}
-	dest[dsize + i] = '\0';
-	return (dsize + ssize);
-}
-
-int	newline(t_list *buffer_list)
-{
-	t_list	*temp;
-
-	temp = buffer_list;
-	while (temp)
-	{
-		if (ft_strchr(temp->content, '\n'))
-			return (1);
-		temp = temp->next;
-	}
-	return (0);
-}
-
-void	ft_lstclear(t_list **lst, void (*del)(void *))
-{
-	t_list	*current;
-	t_list	*next;
-
-	if (lst == NULL || del == NULL)
-		return ;
-	current = *lst;
-	while (current != NULL)
-	{
-		next = current->next;
-		del(current->content);
-		free(current);
-		current = next;
-	}
-	*lst = NULL;
-}
-
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	// Open file for reading
-	fd = open("HP1.txt", O_RDONLY);
-	if (fd == -1)
-	{
-		printf("Error opening file\n");
-		return (1);
-	}
-	// Read file line by line
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
 }
