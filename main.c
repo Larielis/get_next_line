@@ -6,14 +6,16 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/09 23:59:04 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/26 19:24:12 by racamach         ###   ########.fr       */
+/*   Updated: 2024/12/05 18:17:55 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "custom_malloc.h"
 #include "get_next_line.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+
 
 int	main(int argc, char **argv)
 {

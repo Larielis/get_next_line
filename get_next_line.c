@@ -6,10 +6,11 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/04 11:31:38 by racamach          #+#    #+#             */
-/*   Updated: 2024/11/26 20:47:26 by racamach         ###   ########.fr       */
+/*   Updated: 2024/12/05 18:25:19 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "custom_malloc.h"
 #include "get_next_line.h"
 #include <stdlib.h>
 #include <unistd.h>
@@ -31,7 +32,7 @@ char	*get_next_line(int fd)
 	return (line);
 }
 
-int	read_to_buffer_list(int fd, t_list **buffer_list)
+int	read_to_buffer_list(int fd, t_list **buffer_list)	
 {
 	char	*buffer;
 	int		bytes_read;
