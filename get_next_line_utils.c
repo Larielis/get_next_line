@@ -6,11 +6,10 @@
 /*   By: racamach <racamach@student.42madrid.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/05 16:39:39 by racamach          #+#    #+#             */
-/*   Updated: 2024/12/05 18:25:15 by racamach         ###   ########.fr       */
+/*   Updated: 2025/01/24 17:21:46 by racamach         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "custom_malloc.h"
 #include "get_next_line.h"
 #include <stdlib.h>
 
